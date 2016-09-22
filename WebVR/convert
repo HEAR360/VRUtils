@@ -1,0 +1,17 @@
+audio8ChannelWav="$1"
+mp4Video="$2"
+
+# get rid of audio tracks in the original mp4
+ffmpeg -i "$mp4Video" -c copy -an mp4_nosound.mp4
+
+# convert to a standard resolution
+ffmpeg -i mp4_nosound.mp4 -s 3840x1920 mp4_nosound2.mp4
+
+# encoding an 8 channel PCM wav to be opus format
+ffmpeg -i "$audio8ChannelWav" -acodec libopus -b:a 896k -vbr on -compression_level 10 output.opus
+
+# convert the mp4 in standard resolution to be webm VP8 format
+ffmpeg -i mp4_nosound2.mp4 -c:v libvpx -b:v 10M -crf 10 vp8.webm
+
+# add the converted 8 channel opus audio track to the converted webm VP8 video
+ffmpeg -i vp8.webm -i output.opus -codec copy -shortest output.webm
