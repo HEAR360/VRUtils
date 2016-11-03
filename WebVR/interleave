@@ -1,6 +1,6 @@
 frontPerspectiveWav="$1"
-leftPerspectiveWav="$2"
+rightPerspectiveWav="$2"
 backPerspectiveWav="$3"
-rightPerspectiveWav="$4"
+leftPerspectiveWav="$4"
 
-ffmpeg -i "$frontPerspectiveWav" -i "$leftPerspectiveWav" -i "$backPerspectiveWav" -i "$rightPerspectiveWav" -filter_complex "[0:a][1:a][2:a][3:a]amerge=inputs=4[aout]" -map "[aout]" 8channels.wav
+ffmpeg -i "$frontPerspectiveWav" -i "$rightPerspectiveWav" -i "$backPerspectiveWav" -i "$leftPerspectiveWav" -filter_complex "[0:a][1:a][2:a][3:a]amerge=inputs=4[aout]" -map "[aout]" 8channels.wav
