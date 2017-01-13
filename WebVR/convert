@@ -5,7 +5,7 @@ mp4Video="$2"
 ffmpeg -i "$mp4Video" -c copy -an mp4_nosound.mp4
 
 # convert to a standard resolution
-ffmpeg -i mp4_nosound.mp4 -s 3840x1920 mp4_nosound2.mp4
+ffmpeg -i mp4_nosound.mp4 -s 1920x960 mp4_nosound2.mp4
 
 # encoding an 8 channel PCM wav to be opus format
 ffmpeg -i "$audio8ChannelWav" -acodec libopus -b:a 896k -vbr on -compression_level 10 output.opus
