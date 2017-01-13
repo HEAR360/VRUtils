@@ -1,10 +1,19 @@
 videoFile="$1"
 frontPerspectiveWav="$2"
-rightPerspectiveWav="$3"
+leftPerspectiveWav="$3"
 backPerspectiveWav="$4"
-leftPerspectiveWav="$5"
+rightPerspectiveWav="$5"
 outputFile="$6"
 
 ffmpeg -i "$videoFile" -c copy -an outputMuted.mp4
-ffmpeg -i outputMuted.mp4 -i "$frontPerspectiveWav" -i "$rightPerspectiveWav" -i "$backPerspectiveWav" -i "$leftPerspectiveWav" -map 0 -map 1 -map 2 -map 3 -map 4 -vcodec copy -acodec libfdk_aac -b:a 224k "$outputFile"
+ffmpeg -i "$frontPerspectiveWav" -acodec libfdk_aac -b:a 224k front.m4a
+ffmpeg -i "$leftPerspectiveWav" -acodec libfdk_aac -b:a 224k left.m4a
+ffmpeg -i "$backPerspectiveWav" -acodec libfdk_aac -b:a 224k back.m4a
+ffmpeg -i "$rightPerspectiveWav" -acodec libfdk_aac -b:a 224k right.m4a
+
+ffmpeg -i outputMuted.mp4 -i front.m4a -i left.m4a -i back.m4a -i right.m4a -map 0 -map 1 -map 2 -map 3 -map 4 -vcodec copy -acodec copy "$outputFile"
 rm outputMuted.mp4
+rm front.m4a
+rm left.m4a
+rm back.m4a
+rm right.m4a
