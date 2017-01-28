@@ -1,5 +1,12 @@
 audio8ChannelWav="$1"
 mp4Video="$2"
+offsetToRightAngle="$3"
+
+offsetDirection=1
+if [ "$offsetToRightAngle" -lt 0 ]
+then
+  offsetDirection=-1;
+fi
 
 # get rid of audio tracks in the original mp4
 ffmpeg -i "$mp4Video" -c copy -an mp4_nosound.mp4
@@ -11,7 +18,12 @@ ffmpeg -i mp4_nosound.mp4 -s 1920x960 mp4_nosound2.mp4
 ffmpeg -i "$audio8ChannelWav" -acodec libopus -b:a 896k -vbr on -compression_level 10 output.opus
 
 # convert the mp4 in standard resolution to be webm VP8 format
-ffmpeg -i mp4_nosound2.mp4 -c:v libvpx -b:v 10M -crf 10 vp8.webm
+if [ "$offsetToRightAngle" -eq 0 ]
+then
+  ffmpeg -i mp4_nosound2.mp4 -c:v libvpx -b:v 10M -crf 10 vp8.webm
+else
+  ffmpeg -i mp4_nosound2.mp4 -filter_complex "[0:v][0:v]overlay=W*("$offsetToRightAngle"/360):0[bg]; [bg][0:v]overlay=W*("$offsetToRightAngle"/360)-W*("$offsetDirection"),format=yuv420p[out]" -map "[out]" -c:v libvpx -b:v 10M -crf 10 vp8.webm
+fi
 
 # add the converted 8 channel opus audio track to the converted webm VP8 video
 ffmpeg -i vp8.webm -i output.opus -codec copy -shortest output.webm
