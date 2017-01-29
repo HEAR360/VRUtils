@@ -3,15 +3,30 @@ frontPerspectiveWav="$2"
 leftPerspectiveWav="$3"
 backPerspectiveWav="$4"
 rightPerspectiveWav="$5"
-outputFile="$6"
+offsetToRightAngle="$6"
+outputFile="$7"
 
-ffmpeg -i "$videoFile" -c copy -an outputMuted.mp4
+offsetDirection=1
+if [ "$offsetToRightAngle" -lt 0 ]
+then
+  offsetDirection=-1;
+fi
+
 ffmpeg -i "$frontPerspectiveWav" -acodec libfdk_aac -b:a 224k front.m4a
 ffmpeg -i "$leftPerspectiveWav" -acodec libfdk_aac -b:a 224k left.m4a
 ffmpeg -i "$backPerspectiveWav" -acodec libfdk_aac -b:a 224k back.m4a
 ffmpeg -i "$rightPerspectiveWav" -acodec libfdk_aac -b:a 224k right.m4a
 
-ffmpeg -i outputMuted.mp4 -i front.m4a -i left.m4a -i back.m4a -i right.m4a -map 0 -map 1 -map 2 -map 3 -map 4 -vcodec copy -acodec copy "$outputFile"
+# convert the mp4 in standard resolution to be webm VP8 format
+if [ "$offsetToRightAngle" -eq 0 ]
+then
+  ffmpeg -i "$videoFile" -c copy -an outputMuted.mp4
+  ffmpeg -i outputMuted.mp4 -i front.m4a -i left.m4a -i back.m4a -i right.m4a -map 0 -map 1 -map 2 -map 3 -map 4 -vcodec copy -acodec copy "$outputFile"
+else
+  ffmpeg -i "$videoFile" -filter_complex "[0:v][0:v]overlay=W*("$offsetToRightAngle"/360):0[bg]; [bg][0:v]overlay=W*("$offsetToRightAngle"/360)-W*("$offsetDirection"),format=yuv420p[out]" -map "[out]" outputMuted.mp4
+  ffmpeg -i outputMuted.mp4 -i front.m4a -i left.m4a -i back.m4a -i right.m4a -map 1 -map 2 -map 3 -map 4
+fi
+
 rm outputMuted.mp4
 rm front.m4a
 rm left.m4a
