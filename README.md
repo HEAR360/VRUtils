@@ -9,7 +9,7 @@ Track 3: Stereo Audio (AAC)
 Track 4: Stereo Audio (AAC)
 
 Under Mac or linux, make sure FFMPEG is fully installed, then execute
-./convert
+./convert [video file name] [front perspective wav file name] [left perspective wav file name] [back perspective wav file name] [right perspective wav file name] [video rotation offset clockwise] [output video file name]
 
 WebVR
 Generate 8 ball compatible vp8 webm format video for WebVR (native iOS and Android platforms)
