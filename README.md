@@ -12,8 +12,8 @@ Under Mac or linux, make sure FFMPEG is fully installed, then execute
 =====================================================================
 
 # WebVR
-Generate 8 ball compatible vp8 webm format video for WebVR (native iOS and Android platforms)
-* Track 0: Video (H264)
+Generate 8 ball compatible vp8 webm format video for WebVR
+* Track 0: Video (VP8)
 * Track 1: 8 channels Audio (Opus)
 
 Under Mac or linux, make sure FFMPEG is fully installed, then execute
